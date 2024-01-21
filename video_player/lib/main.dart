@@ -46,7 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _controller = VideoPlayerController.networkUrl(
       Uri.parse(
           'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'),
-      // closedCaptionFile: _loadCaptions(),
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
     );
 
@@ -84,105 +83,103 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: ColoredBox(
                     color: Colors.black12.withOpacity(0.3),
                     child: Stack(
-                      children: [
-                        Align(
-
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              'Elephants Dream',
-                              style: TextStyle(color: Colors.white, fontSize: 20),
-                            )),
-                        Padding(
-                            padding:
-                                const EdgeInsets.only(left: 16, bottom: 16),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16.0),
-                                  color: Colors.white.withOpacity(0.5),
-                                ),
-                                child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                          onPressed: () {
-                                            Duration currentPosition =
-                                                _controller.value.position;
-                                            Duration targetPosition =
-                                                currentPosition +
-                                                    const Duration(
-                                                        seconds: -10);
-                                            _controller.seekTo(targetPosition);
-                                          },
-                                          icon: Icon(Icons.replay_10)),
-                                      IconButton(
-                                          onPressed: () {
-                                            _controller.value.isPlaying
-                                                ? _controller.pause()
-                                                : _controller.play();
-                                          },
-                                          icon: _controller.value.isPlaying
-                                              ? Icon(Icons.pause)
-                                              : Icon(Icons.play_arrow)),
-                                      IconButton(
-                                          onPressed: () {
-                                            Duration currentPosition =
-                                                _controller.value.position;
-                                            Duration targetPosition =
-                                                currentPosition +
-                                                    const Duration(seconds: 10);
-                                            _controller.seekTo(targetPosition);
-                                          },
-                                          icon: Icon(Icons.forward_10)),
-                                    ]),
-                              ),
-                            )),
-                        Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Slider(
-                                    max: _controller
-                                        .value.duration.inMilliseconds
-                                        .toDouble(),
-                                    value: _controller
-                                        .value.position.inMilliseconds
-                                        .toDouble(),
-                                    activeColor: Colors.red,
-                                    inactiveColor: Colors.grey,
-                                    onChanged: (value) {
-                                      _controller.seekTo(Duration(
-                                          milliseconds: value.toInt()));
-                                    },
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 18),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                            '${_controller.value.position.inMinutes} : ${(secondsToString((_controller.value.position.inSeconds % 60)))}',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14)),
-                                        Text(
-                                            '${_controller.value.duration.inMinutes} : ${(secondsToString(_controller.value.duration.inSeconds % 60))}',
-                                            style: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 14))
-                                      ],
-                                    ),
-                                  )
-                                ])),
-                      ],
-                    )))
+            children: [
+            Align(
+            alignment: Alignment.topLeft,
+                child: Text(
+                  'Elephants Dream',
+                  style:
+                  TextStyle(color: Colors.white, fontSize: 20),
+                )),
+            Padding(
+                padding:
+                const EdgeInsets.only(left: 16, bottom: 16),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16.0),
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                Duration currentPosition =
+                                    _controller.value.position;
+                                Duration targetPosition =
+                                    currentPosition +
+                                        const Duration(
+                                            seconds: -10);
+                                _controller.seekTo(targetPosition);
+                              },
+                              icon: Icon(Icons.replay_10)),
+                          IconButton(
+                              onPressed: () {
+                                _controller.value.isPlaying
+                                    ? _controller.pause()
+                                    : _controller.play();
+                              },
+                              icon: _controller.value.isPlaying
+                                  ? Icon(Icons.pause)
+                                  : Icon(Icons.play_arrow)),
+                          IconButton(
+                              onPressed: () {
+                                Duration currentPosition =
+                                    _controller.value.position;
+                                Duration targetPosition =
+                                    currentPosition +
+                                        const Duration(seconds: 10);
+                                _controller.seekTo(targetPosition);
+                              },
+                              icon: Icon(Icons.forward_10)),
+                        ]),
+                  ),
+                )),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Slider(
+                        max: _controller
+                            .value.duration.inMilliseconds
+                            .toDouble(),
+                        value: _controller
+                            .value.position.inMilliseconds
+                            .toDouble(),
+                        activeColor: Colors.red,
+                        inactiveColor: Colors.grey,
+                        onChanged: (value) {
+                          _controller.seekTo(Duration(
+                              milliseconds: value.toInt()));
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 18),
+                        child: Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                                '${_controller.value.position.inMinutes} : ${(secondsToString((_controller.value.position.inSeconds % 60)))}',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14)),
+                            Text(
+                                '${_controller.value.duration.inMinutes} : ${(secondsToString(_controller.value.duration.inSeconds % 60))}',
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14))
+                          ],
+                        ),
+                      )
+                    ])),
+          ],
+          )))
           ])),
-
-      // )g comma makes auto-formatting nicer for build methods.
     )));
   }
 }

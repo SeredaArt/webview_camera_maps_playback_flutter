@@ -10,6 +10,9 @@
       <excludeFolder url="file://$MODULE_DIR$/video_player/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/video_player/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/video_player/build" />
+      <excludeFolder url="file://$MODULE_DIR$/maps/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/maps/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/maps/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
