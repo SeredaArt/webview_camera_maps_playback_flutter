@@ -38,12 +38,9 @@ class _MyHomePageState extends State<MyHomePage> {
       target: LatLng(43.887709263406045, 144.05816632323334), zoom: 14.45);
 
   @override
-  void initState() {
-    super.initState();
+  void disposeState() {
+    _controller?.dispose();
   }
-
-  @override
-  void disposeState() {}
 
   @override
   Widget build(BuildContext context) {

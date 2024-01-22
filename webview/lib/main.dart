@@ -1,9 +1,5 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +16,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Elephants Dream'),
     );
   }
 }
@@ -34,145 +30,107 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
-  CameraController? controller;
-  XFile? imageFile;
-
-  late TabController _tabController;
-  int _currentTabIndex = 0;
-  List<String> lastImages = [];
+class _MyHomePageState extends State<MyHomePage> {
+  late WebViewController _controllerWeb;
+  late TextEditingController _controller;
+  bool _isLoading = false;
 
   @override
   void initState() {
+    _controller = TextEditingController();
+    _controllerWeb = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            // Update loading bar.
+          },
+          onPageStarted: (String url) {
+            _isLoading = true;
+            setState(() {});
+          },
+          onPageFinished: (String url) {
+            _isLoading = false;
+            setState(() {});
+          },
+          onWebResourceError: (WebResourceError error) {},
+          onNavigationRequest: (NavigationRequest request) {
+            if (request.url.startsWith('https://www.youtube.com/')) {
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse('https://flutter.dev'));
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(() {
-      setState(() {
-        _currentTabIndex = _tabController.index;
-      });
-    });
-    unawaited(initCamera());
   }
 
   @override
-  void disposeState() {
+  void dispose() {
+    _controller.dispose();
     super.dispose();
-    _tabController.dispose();
-    controller?.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    final CameraController? cameraController = controller;
+  Future<bool> _fowardEnable() async {
+    return await _controllerWeb.canGoForward();
+  }
 
-    // App state changed before we got the chance to initialize.
-    if (cameraController == null || !cameraController.value.isInitialized) {
-      return;
-    }
-
-    if (state == AppLifecycleState.inactive) {
-      cameraController.dispose();
-    } else if (state == AppLifecycleState.resumed) {
-      _initializeCameraController(cameraController.description);
-    }
+  Future<bool> _backEnable() async {
+    return await _controllerWeb.canGoBack();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          Stack(
-            children: [
-              controller?.value.isInitialized == true
-                  ? Center(
-                      child: CameraPreview(controller!),
-                    )
-                  : const SizedBox(),
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: IconButton(
-                      onPressed: () async {
-                        imageFile = await controller?.takePicture();
-                        lastImages.add(imageFile!.path);
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.camera)))
-            ],
-          ),
-          ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: lastImages.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 2.0)),
-                  width: MediaQuery.sizeOf(context).width,
-                  height: MediaQuery.sizeOf(context).height / 4,
-                  child: Image.file(
-                    File(lastImages[index]),
-                    fit: BoxFit.cover,
-                  ),
-                );
-              }),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-          onTap: (index) {
-            setState(() {
-              _tabController.index = index;
-              _currentTabIndex = index;
-            });
-          },
-          currentIndex: _currentTabIndex,
-          items: <BottomNavigationBarItem>[
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.camera),
-              label: 'Сamera',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.camera),
-              label: 'Gallery',
-            ),
-          ]),
-
-      // )g comma makes auto-formatting nicer for build methods.
+    return SafeArea(
+      child: Scaffold(
+          appBar: AppBar(
+              title: TextField(
+                controller: _controller,
+                decoration: const InputDecoration(
+                  hintText: 'Введите адрес',
+                ),
+                onSubmitted: (url) {
+                  _controllerWeb.loadRequest(Uri.parse(url));
+                },
+              ),
+              actions: [
+                FutureBuilder(
+                    future: _backEnable(),
+                    builder: (context, snapshot) {
+                      bool backEnable = snapshot.data ?? false;
+                      return IconButton(
+                        onPressed: () {
+                          backEnable ? _controllerWeb.goBack() : ();
+                        },
+                        icon: backEnable
+                            ? const Icon(Icons.replay_10)
+                            : const Icon(Icons.replay_10, color: Colors.grey),
+                      );
+                    }),
+                FutureBuilder(
+                    future: _fowardEnable(),
+                    builder: (context, snapshot) {
+                      bool forwardEnable = snapshot.data ?? false;
+                      return IconButton(
+                        onPressed: () {
+                          forwardEnable ? _controllerWeb.goForward() : ();
+                        },
+                        icon: forwardEnable
+                            ? const Icon(Icons.forward_10)
+                            : const Icon(Icons.forward_10, color: Colors.grey),
+                      );
+                    }),
+                IconButton(
+                    onPressed: () {
+                      _controllerWeb.reload();
+                    },
+                    icon: _isLoading
+                        ? const Icon(Icons.stop)
+                        : const Icon(Icons.refresh)),
+              ]),
+          body: WebViewWidget(controller: _controllerWeb)),
     );
-  }
-
-  Future<void> _initializeCameraController(
-      CameraDescription cameraDescription) async {
-    if (controller != null) {
-      await controller!.dispose();
-    }
-
-    final CameraController cameraController = CameraController(
-      cameraDescription,
-      kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
-      enableAudio: true,
-      imageFormatGroup: ImageFormatGroup.jpeg,
-    );
-
-    controller = cameraController;
-
-    cameraController.addListener(() {
-      if (mounted) setState(() {});
-    });
-  }
-
-  Future<void>? initCamera() async {
-    var cameras = await availableCameras();
-
-    controller = CameraController(cameras[0], ResolutionPreset.max);
-
-    await controller!.initialize();
-
-    setState(() {});
   }
 }

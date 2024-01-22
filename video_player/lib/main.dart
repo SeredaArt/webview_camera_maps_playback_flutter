@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Colors.black12.withOpacity(0.3),
                     child: Stack(
             children: [
-            Align(
+            const Align(
             alignment: Alignment.topLeft,
                 child: Text(
                   'Elephants Dream',
@@ -114,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             seconds: -10);
                                 _controller.seekTo(targetPosition);
                               },
-                              icon: Icon(Icons.replay_10)),
+                              icon: const Icon(Icons.replay_10)),
                           IconButton(
                               onPressed: () {
                                 _controller.value.isPlaying
@@ -122,8 +122,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     : _controller.play();
                               },
                               icon: _controller.value.isPlaying
-                                  ? Icon(Icons.pause)
-                                  : Icon(Icons.play_arrow)),
+                                  ? const Icon(Icons.pause)
+                                  : const Icon(Icons.play_arrow)),
                           IconButton(
                               onPressed: () {
                                 Duration currentPosition =
@@ -133,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         const Duration(seconds: 10);
                                 _controller.seekTo(targetPosition);
                               },
-                              icon: Icon(Icons.forward_10)),
+                              icon: const Icon(Icons.forward_10)),
                         ]),
                   ),
                 )),
@@ -165,12 +165,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           children: [
                             Text(
                                 '${_controller.value.position.inMinutes} : ${(secondsToString((_controller.value.position.inSeconds % 60)))}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14)),
                             Text(
                                 '${_controller.value.duration.inMinutes} : ${(secondsToString(_controller.value.duration.inSeconds % 60))}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 14))
                           ],
